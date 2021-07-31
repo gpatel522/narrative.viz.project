@@ -1,4 +1,74 @@
 <html>
-<h1>Project header</h1>
-<p>Page 1</p>
+<script src='https://d3js.org/d3.v5.min.js'></script>
+<body onload='init()'>
+<svg viewBox="0 0 300 300">
+</svg>
+<script>
+async function init() {
+var margin = 50;
+
+let fileRows = new Array();
+await fetch("https://flunky.github.io/cars2017.csv")
+   .then(reader => reader.text())
+   .then(function(text){ fileRows = text.split('\n'); });
+
+fileRows.shift(); //remove header row
+fileRows.pop(); //remove trailing /n
+
+const data = new Array();
+fileRows.forEach(element => data.push(element.split(',')));
+
+var fx = d3.scaleLog().domain([10,150]).range([0,200]);
+var fy = d3.scaleLog().domain([10,150]).range([200,0]);
+var width = 700;
+var height = 700;
+var margin = 50;
+
+var graph = d3.select("svg")
+ .attr("width",width + 2*margin)
+ .attr("height",height + 2*margin)
+ .append("g")
+
+var circle = graph.attr("transform","translate("+margin+","+margin+")")
+               .selectAll("g")
+               .data(data)
+               .enter()
+               .append("circle")
+			   .attr("id", function(d,i) { return "circle" + i; })
+               .attr("cx", function(d,i) { return fx(d[4]); })
+               .attr("cy", function(d,i) { return fy(d[3]); })
+               .attr("r", function(d) { return parseInt(d[2])+2; })
+               .attr("fill", "lime")
+               .attr("stroke", "blue");
+
+d3.select("svg").selectAll("#circle1").attr("fill","red");
+d3.select("svg").selectAll("#circle12").attr("fill","red");
+d3.select("svg").selectAll("#circle13").attr("fill","red");
+d3.select("svg").selectAll("#circle14").attr("fill","red");
+d3.select("svg").selectAll("#circle15").attr("fill","red");
+d3.select("svg").selectAll("#circle16").attr("fill","red");
+d3.select("svg").selectAll("#circle17").attr("fill","red");
+d3.select("svg").selectAll("#circle18").attr("fill","red");
+d3.select("svg").selectAll("#circle19").attr("fill","red");
+d3.select("svg").selectAll("#circle100").attr("fill","red");
+d3.select("svg").selectAll("#circle21").attr("fill","red");
+d3.select("svg").selectAll("#circle31").attr("fill","red");
+
+d3.select("svg")
+ .attr("width",width + 2*margin)
+ .attr("height",height + 2*margin)
+ .append("g")
+ .attr("transform","translate("+margin+","+margin+")")
+ .call(d3.axisLeft(fy).tickValues([10,20,50,100]).tickFormat((d, i) => [10,20,50,100][i]));
+
+d3.select("svg")
+ .attr("width",width + 2*margin)
+ .attr("height",height + 2*margin)
+ .append("g")
+ .attr("transform","translate("+margin+","+250+")")
+ .call(d3.axisBottom(fx).tickValues([10,20,50,100]).tickFormat((d, i) => [10,20,50,100][i]));
+
+}
+</script>
+</body>
 </html>
