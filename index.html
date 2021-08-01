@@ -16,18 +16,22 @@
 
 .type1 {background-color: #4CAF50;} /* Green */
 .type2 {background-color: #008CBA;} /* Blue */
+.tab {
+	display: inline-block;
+	margin-left: 40px;
+}
 </style>
 </head>
 <script src='https://d3js.org/d3.v5.min.js'></script>
 <body onload='init()'>
-<button class="button type1" id="Any">Any type</button>
-<button class="button type1" id="Electric">Electric</button>
-<button class="button type1" id="3">3 cylinders</button>
-<button class="button type1" id="4">4 cylinders</button>
-<button class="button type1" id="6">6 cylinders</button>
-<button class="button type1" id="8">8 cylinders</button>
-<button class="button type1" id="10">10 cylinders</button>
-<button class="button type1" id="12">12 cylinders</button>
+<button class="button type1" id="AnyButton">Any type</button>
+<button class="button type1" id="ElectricButton">Electric</button>
+<button class="button type1" id="3Button">3 cylinders</button>
+<button class="button type1" id="4Button">4 cylinders</button>
+<button class="button type1" id="6Button">6 cylinders</button>
+<button class="button type1" id="8Button">8 cylinders</button>
+<button class="button type1" id="10Button">10 cylinders</button>
+<button class="button type1" id="12Button">12 cylinders</button>
 </p>
 <div id="my_dataviz"></div>
 <!--svg viewBox="0 0 300 300" align: center></svg-->
@@ -59,19 +63,27 @@ function initLeftChart() {
 	var width = 700;
 	var height = 700;
 	var margin = 50;
+	var scalefactor = 400;
 
 	var graph = d3.select("#my_dataviz")
 				 .append("svg")
-				 .attr("viewBox","0,0,300,300")
+				 .attr("viewBox","0,0,"+scalefactor+","+scalefactor)
 				 .attr("width",width + 2*margin)
 				 .attr("height",height + 2*margin)
 				 .append("g");
 
 	var tooltip = d3.select("#my_dataviz")
 					.append("div")
-					.style("position", "absolute")
+					.attr("class", "tooltip")
 					.style("visibility", "hidden")
-					.text("I'm a circle!");
+					.style("background-color", "white")
+					.style("border", "solid")
+					.style("border-width", "2px")
+					.style("border-radius", "5px")
+					.style("padding", "5px")
+					.text("I'm a circle!")
+					.style("position", "absolute");
+					//.text("I'm a circle!");
 
 	var circle = graph.attr("transform","translate("+margin+","+margin+")")
 				    .selectAll("g")
@@ -88,12 +100,20 @@ function initLeftChart() {
 						function(d,i)
 						{
 							d3.select(this).attr("fill","red");
-							return tooltip.style("visibility", "visible");
+							return tooltip.style("top",  (d3.mouse(this)[1]) + height/2-margin + "px")
+										.style("left", (d3.mouse(this)[0]) + width/2-margin + "px")
+										.html("<p>Make:\t" + d[0] + 
+											"</br>Fuel:\t" + d[1] + 
+											"</br>Cylinders:\t" + d[2] + 
+											"</br>AvgHighwayMPG:\t" + d[3] + 
+											"</br>AvgCityMPG:\t" + d[4])
+										.style("visibility", "visible");
 						})
 					.on("mousemove", 
 						function(d,i)
 						{
-							return tooltip.style("top", "100px").style("left","100px");
+							return tooltip.style("top",  (d3.mouse(this)[1]) + height/2-margin + "px")
+										.style("left", (d3.mouse(this)[0]) + width/2-margin + "px");
 						})
 				   .on("mouseout", 
 						function(d,i)
@@ -117,6 +137,8 @@ function initLeftChart() {
 	 .append("g")
 	 .attr("transform","translate("+margin+","+250+")")
 	 .call(d3.axisBottom(fx).tickValues([10,20,50,100]).tickFormat((d, i) => [10,20,50,100][i]));
+	 
+	d3.selectAll("button").on("click",function(d,id){ console.log("pressed" + d + "-" + id); });
 }
 </script>
 </body>
