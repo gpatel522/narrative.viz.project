@@ -83,9 +83,20 @@ function hookupButtonListeners()
 	d3.selectAll("button").on("click",
 		function(d,index)
 		{
+			for (var i = 0; i < 16; i++)
+			{
+				if (i == index*2-1 || i == index*2-2 || index == 0)
+				{
+					d3.select("#my_dataviz2").select("svg").selectAll("#rect" + i).style("opacity", "1");
+				}
+				else
+				{
+					d3.select("#my_dataviz2").select("svg").selectAll("#rect" + i).style("opacity", "0.25");
+				}
+			}
 			if (index == 0) //Any
 			{
-				d3.select("#my_dataviz1").select("svg").selectAll("circle").style("visibility", "visible")
+				d3.select("#my_dataviz1").select("svg").selectAll("circle").style("visibility", "visible");
 			}
 			else if (index == 1) // Electric
 			{
@@ -161,9 +172,9 @@ function hookupButtonListeners()
 }
 function initRightChart() 
 {
-	var dataCylinders = [0,2,3,4,6,8,10,12];
-	var data = [101.5,119.2,33,36,37.5,31,31.36538462,24,25.58974359,18.28205128,21.86666667,14.7,20.66666667,13.33333333,18.71428571,12];
-	var x = d3.scaleBand().domain(dataCylinders).range([0,208]);
+	var dataCylinders = [0,3,4,6,8,10,12];
+	var data = [101.5,119.2,37.5,31,31.36538462,24,25.58974359,18.28205128,21.86666667,14.7,20.66666667,13.33333333,18.71428571,12];
+	var x = d3.scaleBand().domain(dataCylinders).range([0,183]);
 	var y = d3.scaleLinear().domain([0,150]).range([150,0]);
 	var width = 700;
 	var height = 700;
@@ -231,10 +242,10 @@ function initRightChart()
      .text("Average MPG");
 	 
 	var svg = d3.select("#my_dataviz2").select("svg")
-    svg.append("rect").attr("x",200).attr("y",70).attr("width",13).attr("height",13).style("fill", bar1Color)
-	svg.append("rect").attr("x",200).attr("y",90).attr("width",13).attr("height",13).style("fill", bar2Color)
-	svg.append("text").attr("x", 220).attr("y", 78).text("Avg MPG highway").style("font-size", "10").attr("alignment-baseline","middle")
-	svg.append("text").attr("x", 220).attr("y", 98).text("Avg MPG city").style("font-size", "10").attr("alignment-baseline","middle")
+    svg.append("circle").attr("cx",180).attr("cy",100).attr("r",6).style("fill", bar1Color)
+	svg.append("circle").attr("cx",180).attr("cy",117).attr("r",6).style("fill", bar2Color)
+	svg.append("text").attr("x", 195).attr("y", 100).text("Avg MPG highway").style("font-size", "10").attr("alignment-baseline","middle")
+	svg.append("text").attr("x", 195).attr("y", 117).text("Avg MPG city").style("font-size", "10").attr("alignment-baseline","middle")
 }
 
 function initLeftChart() 
