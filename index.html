@@ -4,13 +4,14 @@
 .button {
   border: none;
   color: white;
-  padding: 15px 32px;
+  padding: 15px 15px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
+  font-size: 14px;
   margin: 4px 2px;
   cursor: pointer;
+  width: 120px;
 }
 
 .type1 {background-color: #4CAF50;} /* Green */
@@ -19,83 +20,103 @@
 </head>
 <script src='https://d3js.org/d3.v5.min.js'></script>
 <body onload='init()'>
-<button class="button type1" id="All">All</button>
+<button class="button type1" id="Any">Any type</button>
 <button class="button type1" id="Electric">Electric</button>
-<button class="button type1" id="3">3</button>
-<button class="button type1" id="4">4</button>
-<button class="button type1" id="6">6</button>
-<button class="button type1" id="8">8</button>
-<button class="button type1" id="10">10</button>
-<button class="button type1" id="12">12</button>
+<button class="button type1" id="3">3 cylinders</button>
+<button class="button type1" id="4">4 cylinders</button>
+<button class="button type1" id="6">6 cylinders</button>
+<button class="button type1" id="8">8 cylinders</button>
+<button class="button type1" id="10">10 cylinders</button>
+<button class="button type1" id="12">12 cylinders</button>
 </p>
-<svg viewBox="0 0 300 300" align: center>
-</svg>
+<div id="my_dataviz"></div>
+<!--svg viewBox="0 0 300 300" align: center></svg-->
 <script>
-async function init() {
-var margin = 50;
-
-let fileRows = new Array();
-await fetch("https://flunky.github.io/cars2017.csv")
-   .then(reader => reader.text())
-   .then(function(text){ fileRows = text.split('\n'); });
-
-fileRows.shift(); //remove header row
-fileRows.pop(); //remove trailing /n
-fileRows.splice(15, 1); //some cleanup - removing 2 cylinders since its only 1 car
-
 const data = new Array();
-fileRows.forEach(element => data.push(element.split(',')));
+async function init() {
+	let fileRows = new Array();
+	await fetch("https://flunky.github.io/cars2017.csv")
+	   .then(reader => reader.text())
+	   .then(function(text){ fileRows = text.split('\n'); });
+	   
+	fileRows.shift(); //remove header row
+	fileRows.pop(); //remove trailing /n
+	fileRows.splice(15, 1); //some cleanup - removing 2 cylinders since its only 1 car
+	
+	fileRows.forEach(element => data.push(element.split(',')));
+	
+	initLeftChart();
+	initRightChart();
+}
 
-var fx = d3.scaleLog().domain([10,150]).range([0,200]);
-var fy = d3.scaleLog().domain([10,150]).range([200,0]);
-var width = 700;
-var height = 700;
-var margin = 50;
+function initRightChart() {
+	
+}
 
-var graph = d3.select("svg")
- .attr("width",width + 2*margin)
- .attr("height",height + 2*margin)
- .append("g")
+function initLeftChart() {
+	var fx = d3.scaleLog().domain([10,150]).range([0,200]);
+	var fy = d3.scaleLog().domain([10,150]).range([200,0]);
+	var width = 700;
+	var height = 700;
+	var margin = 50;
 
-var circle = graph.attr("transform","translate("+margin+","+margin+")")
-               .selectAll("g")
-               .data(data)
-               .enter()
-               .append("circle")
-			   .attr("id", function(d,i) { return "circle" + i; })
-               .attr("cx", function(d,i) { return fx(d[4]); })
-               .attr("cy", function(d,i) { return fy(d[3]); })
-               .attr("r", function(d) { return parseInt(d[2])+2; })
-               .attr("fill", "lime")
-               .attr("stroke", "blue");
+	var graph = d3.select("#my_dataviz")
+				 .append("svg")
+				 .attr("viewBox","0,0,300,300")
+				 .attr("width",width + 2*margin)
+				 .attr("height",height + 2*margin)
+				 .append("g");
 
-d3.select("svg").selectAll("#circle1").attr("fill","red");
-d3.select("svg").selectAll("#circle12").attr("fill","red");
-d3.select("svg").selectAll("#circle13").attr("fill","red");
-d3.select("svg").selectAll("#circle14").attr("fill","red");
-d3.select("svg").selectAll("#circle15").attr("fill","red");
-d3.select("svg").selectAll("#circle16").attr("fill","red");
-d3.select("svg").selectAll("#circle17").attr("fill","red");
-d3.select("svg").selectAll("#circle18").attr("fill","red");
-d3.select("svg").selectAll("#circle19").attr("fill","red");
-d3.select("svg").selectAll("#circle100").attr("fill","red");
-d3.select("svg").selectAll("#circle21").attr("fill","red");
-d3.select("svg").selectAll("#circle31").attr("fill","red");
+	var tooltip = d3.select("#my_dataviz")
+					.append("div")
+					.style("position", "absolute")
+					.style("visibility", "hidden")
+					.text("I'm a circle!");
 
-d3.select("svg")
- .attr("width",width + 2*margin)
- .attr("height",height + 2*margin)
- .append("g")
- .attr("transform","translate("+margin+","+margin+")")
- .call(d3.axisLeft(fy).tickValues([10,20,50,100]).tickFormat((d, i) => [10,20,50,100][i]));
+	var circle = graph.attr("transform","translate("+margin+","+margin+")")
+				    .selectAll("g")
+				    .data(data)
+				    .enter()
+				    .append("circle")
+				    .attr("id", function(d,i) { return "circle" + i; })
+				    .attr("cx", function(d,i) { return fx(d[4]); })
+				    .attr("cy", function(d,i) { return fy(d[3]); })
+				    .attr("r", function(d) { return parseInt(d[2])+2; })
+				    .attr("fill", "lime")
+				    .attr("stroke", "blue")
+				    .on("mouseover", 
+						function(d,i)
+						{
+							d3.select(this).attr("fill","red");
+							return tooltip.style("visibility", "visible");
+						})
+					.on("mousemove", 
+						function(d,i)
+						{
+							return tooltip.style("top", "100px").style("left","100px");
+						})
+				   .on("mouseout", 
+						function(d,i)
+						{
+							d3.select(this).attr("fill","lime");
+							return tooltip.style("visibility", "hidden");
+						});
+	
+	//d3.select("svg").selectAll("#circle1").attr("fill","red");
 
-d3.select("svg")
- .attr("width",width + 2*margin)
- .attr("height",height + 2*margin)
- .append("g")
- .attr("transform","translate("+margin+","+250+")")
- .call(d3.axisBottom(fx).tickValues([10,20,50,100]).tickFormat((d, i) => [10,20,50,100][i]));
+	d3.select("svg")
+	 .attr("width",width + 2*margin)
+	 .attr("height",height + 2*margin)
+	 .append("g")
+	 .attr("transform","translate("+margin+","+margin+")")
+	 .call(d3.axisLeft(fy).tickValues([10,20,50,100]).tickFormat((d, i) => [10,20,50,100][i]));
 
+	d3.select("svg")
+	 .attr("width",width + 2*margin)
+	 .attr("height",height + 2*margin)
+	 .append("g")
+	 .attr("transform","translate("+margin+","+250+")")
+	 .call(d3.axisBottom(fx).tickValues([10,20,50,100]).tickFormat((d, i) => [10,20,50,100][i]));
 }
 </script>
 </body>
