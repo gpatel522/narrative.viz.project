@@ -47,6 +47,7 @@
 <!--svg viewBox="0 0 300 300" align: center></svg-->
 <script>
 const data = new Array();
+const avgData = new Array();
 var defaultFill = "lightblue"
 var highlightFill = "lightgreen"
 async function init() 
@@ -59,30 +60,181 @@ async function init()
 	fileRows.shift(); //remove header row
 	fileRows.pop(); //remove trailing /n
 	fileRows.splice(15, 1); //some cleanup - removing 2 cylinders since its only 1 car
-	
 	fileRows.forEach(element => data.push(element.split(',')));
+	
+	
+	let fileRows2 = new Array();
+	await fetch("AverageData.csv")
+	   .then(reader => reader.text())
+	   .then(function(text){ fileRows2 = text.split('\n'); });
+	  
+	fileRows2.shift(); //remove header row
+	fileRows2.pop(); //remove trailing /n
+	fileRows2.splice(15, 1); //some cleanup - removing 2 cylinders since its only 1 car
+	fileRows2.forEach(element => avgData.push(element.split(',')));
+	console.log(avgData);
 	
 	initLeftChart();
 	initRightChart();
+	hookupButtonListeners();
 }
-
+function hookupButtonListeners()
+{
+	d3.selectAll("button").on("click",
+		function(d,index)
+		{
+			if (index == 0) //Any
+			{
+				d3.select("#my_dataviz1").select("svg").selectAll("circle").style("visibility", "visible")
+			}
+			else if (index == 1) // Electric
+			{
+				for (var i = 0; i < data.length; i++) 
+				{
+					if (data[i][2] == 0)
+						d3.select("#my_dataviz1").select("svg").selectAll("#circle" + i).style("visibility", "visible")
+					else
+						d3.select("#my_dataviz1").select("svg").selectAll("#circle" + i).style("visibility", "hidden")
+				}
+			}
+			else if (index == 2) //3 cyl
+			{
+				for (var i = 0; i < data.length; i++) 
+				{
+					if (data[i][2] == 3)
+						d3.select("#my_dataviz1").select("svg").selectAll("#circle" + i).style("visibility", "visible")
+					else
+						d3.select("#my_dataviz1").select("svg").selectAll("#circle" + i).style("visibility", "hidden")
+				}
+			}
+			else if (index == 3) //4 cyl
+			{
+				for (var i = 0; i < data.length; i++) 
+				{
+					if (data[i][2] == 4)
+						d3.select("#my_dataviz1").select("svg").selectAll("#circle" + i).style("visibility", "visible")
+					else
+						d3.select("#my_dataviz1").select("svg").selectAll("#circle" + i).style("visibility", "hidden")
+				}
+			}
+			else if (index == 4) //6 cyl
+			{
+				for (var i = 0; i < data.length; i++) 
+				{
+					if (data[i][2] == 6)
+						d3.select("#my_dataviz1").select("svg").selectAll("#circle" + i).style("visibility", "visible")
+					else
+						d3.select("#my_dataviz1").select("svg").selectAll("#circle" + i).style("visibility", "hidden")
+				}
+			}
+			else if (index == 5) //8 cyl
+			{
+				for (var i = 0; i < data.length; i++) 
+				{
+					if (data[i][2] == 8)
+						d3.select("#my_dataviz1").select("svg").selectAll("#circle" + i).style("visibility", "visible")
+					else
+						d3.select("#my_dataviz1").select("svg").selectAll("#circle" + i).style("visibility", "hidden")
+				}
+			}
+			else if (index == 6) //10 cyl
+			{
+				for (var i = 0; i < data.length; i++) 
+				{
+					if (data[i][2] == 10)
+						d3.select("#my_dataviz1").select("svg").selectAll("#circle" + i).style("visibility", "visible")
+					else
+						d3.select("#my_dataviz1").select("svg").selectAll("#circle" + i).style("visibility", "hidden")
+				}
+			}
+			else if (index == 7) //12 cyl
+			{
+				for (var i = 0; i < data.length; i++) 
+				{
+					if (data[i][2] == 12)
+						d3.select("#my_dataviz1").select("svg").selectAll("#circle" + i).style("visibility", "visible")
+					else
+						d3.select("#my_dataviz1").select("svg").selectAll("#circle" + i).style("visibility", "hidden")
+				}
+			}
+		});
+}
 function initRightChart() 
 {
-	var data2 = [4,8,15,16,23,42];
-	var color = ['pink','lightyellow','lightgreen','lightcyan','lightblue','violet'];
-	var pie = d3.pie();
-	var arc = d3.arc().innerRadius(0).outerRadius(100);
-	var margin = 150;
-	d3.select("#my_dataviz2").append("svg")
-	 .append("g")
-	 .attr("transform","translate("+margin+","+margin+")")
-	 .selectAll("path")
-	 .data(pie(data2))
-	 .enter()
-	 .append("path")
-	 .attr("d",arc)
-	 .attr("fill",function(d,i) {return color[i];});
+	var dataCylinders = [0,2,3,4,6,8,10,12];
+	var data = [101.5,119.2,33,36,37.5,31,31.36538462,24,25.58974359,18.28205128,21.86666667,14.7,20.66666667,13.33333333,18.71428571,12];
+	var x = d3.scaleBand().domain(dataCylinders).range([0,208]);
+	var y = d3.scaleLinear().domain([0,150]).range([150,0]);
+	var width = 700;
+	var height = 700;
+	var witdthMargin = 60;
+	var heightMargin = 50;
+	var scalefactor = 350;
+	var bar1Color = "green";
+	var bar2Color = "blue";
 
+	var graph = d3.select("#my_dataviz2")
+				 .append("svg")
+				 .attr("viewBox","0,0,"+scalefactor+","+scalefactor)
+				 .attr("width",width + 2*witdthMargin)
+				 .attr("height",height + 2*heightMargin)
+				 .append("g");
+	//var data2 = [4,8,15,16,23,42];
+	var bar = graph.attr("transform","translate("+witdthMargin+","+heightMargin+")")
+				   .selectAll("g")
+				   .data(data)
+				   .enter()
+				   .append("rect")
+				   .attr("id", function(d,i) { return "rect" + i; })
+				   .attr("x", function(d,i) { return (i)*13; })
+				   .attr("y", function(d,i) { return 200-data[i]; })
+				   .attr("width", function(d,i) { return 13; })
+				   .attr("height", function(d,i) { return data[i]; })
+				   .attr("fill", function(d,i) { if (i%2 == 0)
+													return bar1Color;
+												 else
+													return bar2Color;});
+	//Axis
+	d3.select("#my_dataviz2")
+	 .select("svg")
+	 .attr("width",width + 2*witdthMargin)
+	 .attr("height",height + 2*heightMargin)
+	 .append("g")
+	 .attr("transform","translate("+witdthMargin+","+(heightMargin+50)+")")
+	 .call(d3.axisLeft(y));
+
+	d3.select("#my_dataviz2")
+	 .select("svg")
+	 .attr("width",width + 2*witdthMargin)
+	 .attr("height",height + 2*heightMargin)
+	 .append("g")
+	 .attr("transform","translate("+witdthMargin+","+(heightMargin+200)+")")
+	 .call(d3.axisBottom(x));
+	 
+	d3.select("#my_dataviz2").select("svg")
+	 .append("text")
+     .attr("class", "x label")
+     .attr("text-anchor", "end")
+     .attr("font-size", "10")
+     .attr("x", width+witdthMargin-570)
+     .attr("y", height+heightMargin-460)
+     .text("Car Cylinders");
+	d3.select("#my_dataviz2").select("svg")
+	 .append("text")
+     .attr("class", "y label")
+     .attr("text-anchor", "end")
+     .attr("y", 8)
+     .attr("font-size", "10")
+     .attr("y", width+witdthMargin-735)
+     .attr("x", height+heightMargin-900)
+     .attr("transform", "rotate(-90)")
+     .text("Average MPG");
+	 
+	var svg = d3.select("#my_dataviz2").select("svg")
+    svg.append("rect").attr("x",200).attr("y",70).attr("width",13).attr("height",13).style("fill", bar1Color)
+	svg.append("rect").attr("x",200).attr("y",90).attr("width",13).attr("height",13).style("fill", bar2Color)
+	svg.append("text").attr("x", 220).attr("y", 78).text("Avg MPG highway").style("font-size", "10").attr("alignment-baseline","middle")
+	svg.append("text").attr("x", 220).attr("y", 98).text("Avg MPG city").style("font-size", "10").attr("alignment-baseline","middle")
 }
 
 function initLeftChart() 
@@ -93,7 +245,7 @@ function initLeftChart()
 	var height = 700;
 	var witdthMargin = 60;
 	var heightMargin = 50;
-	var scalefactor = 400;
+	var scalefactor = 350;
 
 	var graph = d3.select("#my_dataviz1")
 				 .append("svg")
@@ -168,14 +320,16 @@ function initLeftChart()
 	 .attr("transform","translate("+witdthMargin+","+250+")")
 	 .call(d3.axisBottom(fx).tickValues([10,20,50,100]).tickFormat((d, i) => [10,20,50,100][i]));
 	
-	d3.select("svg").append("text")
+	d3.select("svg")
+	 .append("text")
      .attr("class", "x label")
      .attr("text-anchor", "end")
      .attr("font-size", "10")
      .attr("x", width+witdthMargin-570)
      .attr("y", height+heightMargin-460)
      .text("Average MPG City");
-	d3.select("svg").append("text")
+	d3.select("svg")
+	 .append("text")
      .attr("class", "y label")
      .attr("text-anchor", "end")
      .attr("y", 8)
@@ -184,85 +338,6 @@ function initLeftChart()
      .attr("x", height+heightMargin-860)
      .attr("transform", "rotate(-90)")
      .text("Average MPG Highway");
-	 
-	d3.selectAll("button").on("click",
-		function(d,index)
-		{
-			if (index == 0) //Any
-			{
-				d3.select("svg").selectAll("circle").style("visibility", "visible")
-			}
-			else if (index == 1) // Electric
-			{
-				for (var i = 0; i < data.length; i++) 
-				{
-					if (data[i][2] == 0)
-						d3.select("svg").selectAll("#circle" + i).style("visibility", "visible")
-					else
-						d3.select("svg").selectAll("#circle" + i).style("visibility", "hidden")
-				}
-			}
-			else if (index == 2) //3 cyl
-			{
-				for (var i = 0; i < data.length; i++) 
-				{
-					if (data[i][2] == 3)
-						d3.select("svg").selectAll("#circle" + i).style("visibility", "visible")
-					else
-						d3.select("svg").selectAll("#circle" + i).style("visibility", "hidden")
-				}
-			}
-			else if (index == 3) //4 cyl
-			{
-				for (var i = 0; i < data.length; i++) 
-				{
-					if (data[i][2] == 4)
-						d3.select("svg").selectAll("#circle" + i).style("visibility", "visible")
-					else
-						d3.select("svg").selectAll("#circle" + i).style("visibility", "hidden")
-				}
-			}
-			else if (index == 4) //6 cyl
-			{
-				for (var i = 0; i < data.length; i++) 
-				{
-					if (data[i][2] == 6)
-						d3.select("svg").selectAll("#circle" + i).style("visibility", "visible")
-					else
-						d3.select("svg").selectAll("#circle" + i).style("visibility", "hidden")
-				}
-			}
-			else if (index == 5) //8 cyl
-			{
-				for (var i = 0; i < data.length; i++) 
-				{
-					if (data[i][2] == 8)
-						d3.select("svg").selectAll("#circle" + i).style("visibility", "visible")
-					else
-						d3.select("svg").selectAll("#circle" + i).style("visibility", "hidden")
-				}
-			}
-			else if (index == 6) //10 cyl
-			{
-				for (var i = 0; i < data.length; i++) 
-				{
-					if (data[i][2] == 10)
-						d3.select("svg").selectAll("#circle" + i).style("visibility", "visible")
-					else
-						d3.select("svg").selectAll("#circle" + i).style("visibility", "hidden")
-				}
-			}
-			else if (index == 7) //12 cyl
-			{
-				for (var i = 0; i < data.length; i++) 
-				{
-					if (data[i][2] == 12)
-						d3.select("svg").selectAll("#circle" + i).style("visibility", "visible")
-					else
-						d3.select("svg").selectAll("#circle" + i).style("visibility", "hidden")
-				}
-			}
-		});
 }
 </script>
 </body>
