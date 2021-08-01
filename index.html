@@ -1,21 +1,27 @@
 <html>
 <head>
 <style>
-.button {
-  border: none;
+.btn-group button {
+  background-color: #04AA6D;
+  border: 1px solid green;
   color: white;
-  padding: 15px 15px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  margin: 4px 2px;
+  padding: 10px 24px;
   cursor: pointer;
-  width: 120px;
+  float: left;
+  margin: 5px;
+}
+.btn-group:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+.btn-group button:not(:last-child) {
+  border-right: none;
+}
+.btn-group button:hover {
+  background-color: #3e8e41;
 }
 
-.type1 {background-color: #4CAF50;} /* Green */
-.type2 {background-color: #008CBA;} /* Blue */
 .grid-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -31,15 +37,17 @@
 </head>
 <script src='https://d3js.org/d3.v5.min.js'></script>
 <body onload='init()'>
-<button class="button type1" id="AnyButton">Any type</button>
-<button class="button type1" id="ElectricButton">Electric</button>
-<button class="button type1" id="3Button">3 cylinders</button>
-<button class="button type1" id="4Button">4 cylinders</button>
-<button class="button type1" id="6Button">6 cylinders</button>
-<button class="button type1" id="8Button">8 cylinders</button>
-<button class="button type1" id="10Button">10 cylinders</button>
-<button class="button type1" id="12Button">12 cylinders</button>
-</p>
+<div class="btn-group" style="width:100%">
+<button style="width:11%" id="AnyButton">Any type</button>
+<button style="width:11%" id="ElectricButton">Electric</button>
+<button style="width:11%" id="3Button">3 cylinders</button>
+<button style="width:11%" id="4Button">4 cylinders</button>
+<button style="width:11%" id="6Button">6 cylinders</button>
+<button style="width:11%" id="8Button">8 cylinders</button>
+<button style="width:11%" id="10Button">10 cylinders</button>
+<button style="width:11%" id="12Button">12 cylinders</button>
+</div>
+</br>
 <div class="grid-container">
 <div id="my_dataviz1" class="grid-child"></div>
 <div id="my_dataviz2" class="grid-child"></div>
@@ -47,7 +55,6 @@
 <!--svg viewBox="0 0 300 300" align: center></svg-->
 <script>
 const data = new Array();
-const avgData = new Array();
 var defaultFill = "lightblue"
 var highlightFill = "lightgreen"
 async function init() 
@@ -61,18 +68,6 @@ async function init()
 	fileRows.pop(); //remove trailing /n
 	fileRows.splice(15, 1); //some cleanup - removing 2 cylinders since its only 1 car
 	fileRows.forEach(element => data.push(element.split(',')));
-	
-	
-	let fileRows2 = new Array();
-	await fetch("AverageData.csv")
-	   .then(reader => reader.text())
-	   .then(function(text){ fileRows2 = text.split('\n'); });
-	  
-	fileRows2.shift(); //remove header row
-	fileRows2.pop(); //remove trailing /n
-	fileRows2.splice(15, 1); //some cleanup - removing 2 cylinders since its only 1 car
-	fileRows2.forEach(element => avgData.push(element.split(',')));
-	console.log(avgData);
 	
 	initLeftChart();
 	initRightChart();
