@@ -16,9 +16,16 @@
 
 .type1 {background-color: #4CAF50;} /* Green */
 .type2 {background-color: #008CBA;} /* Blue */
-.tab {
-	display: inline-block;
-	margin-left: 40px;
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+}
+.grid-child {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+	border: 1px outset red;
 }
 </style>
 </head>
@@ -33,7 +40,10 @@
 <button class="button type1" id="10Button">10 cylinders</button>
 <button class="button type1" id="12Button">12 cylinders</button>
 </p>
-<div id="my_dataviz"></div>
+<div class="grid-container">
+<div id="my_dataviz1" class="grid-child"></div>
+<div id="my_dataviz2" class="grid-child"></div>
+</div>
 <!--svg viewBox="0 0 300 300" align: center></svg-->
 <script>
 const data = new Array();
@@ -58,7 +68,21 @@ async function init()
 
 function initRightChart() 
 {
-	
+	var data2 = [4,8,15,16,23,42];
+	var color = ['pink','lightyellow','lightgreen','lightcyan','lightblue','violet'];
+	var pie = d3.pie();
+	var arc = d3.arc().innerRadius(0).outerRadius(100);
+	var margin = 150;
+	d3.select("#my_dataviz2").append("svg")
+	 .append("g")
+	 .attr("transform","translate("+margin+","+margin+")")
+	 .selectAll("path")
+	 .data(pie(data2))
+	 .enter()
+	 .append("path")
+	 .attr("d",arc)
+	 .attr("fill",function(d,i) {return color[i];});
+
 }
 
 function initLeftChart() 
@@ -71,14 +95,14 @@ function initLeftChart()
 	var heightMargin = 50;
 	var scalefactor = 400;
 
-	var graph = d3.select("#my_dataviz")
+	var graph = d3.select("#my_dataviz1")
 				 .append("svg")
 				 .attr("viewBox","0,0,"+scalefactor+","+scalefactor)
 				 .attr("width",width + 2*witdthMargin)
 				 .attr("height",height + 2*heightMargin)
 				 .append("g");
 
-	var tooltip = d3.select("#my_dataviz")
+	var tooltip = d3.select("#my_dataviz1")
 					.append("div")
 					.attr("class", "tooltip")
 					.style("visibility", "hidden")
