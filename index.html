@@ -37,6 +37,8 @@
 <!--svg viewBox="0 0 300 300" align: center></svg-->
 <script>
 const data = new Array();
+var defaultFill = "lightblue"
+var highlightFill = "lightgreen"
 async function init() 
 {
 	let fileRows = new Array();
@@ -65,14 +67,15 @@ function initLeftChart()
 	var fy = d3.scaleLog().domain([10,150]).range([200,0]);
 	var width = 700;
 	var height = 700;
-	var margin = 50;
+	var witdthMargin = 80;
+	var heightMargin = 50;
 	var scalefactor = 400;
 
 	var graph = d3.select("#my_dataviz")
 				 .append("svg")
 				 .attr("viewBox","0,0,"+scalefactor+","+scalefactor)
-				 .attr("width",width + 2*margin)
-				 .attr("height",height + 2*margin)
+				 .attr("width",width + 2*witdthMargin)
+				 .attr("height",height + 2*heightMargin)
 				 .append("g");
 
 	var tooltip = d3.select("#my_dataviz")
@@ -88,7 +91,7 @@ function initLeftChart()
 					.style("position", "absolute");
 					//.text("I'm a circle!");
 
-	var circle = graph.attr("transform","translate("+margin+","+margin+")")
+	var circle = graph.attr("transform","translate("+witdthMargin+","+heightMargin+")")
 				    .selectAll("g")
 				    .data(data)
 				    .enter()
@@ -97,14 +100,14 @@ function initLeftChart()
 				    .attr("cx", function(d,i) { return fx(d[4]); })
 				    .attr("cy", function(d,i) { return fy(d[3]); })
 				    .attr("r", function(d) { return parseInt(d[2])+2; })
-				    .attr("fill", "lime")
+				    .attr("fill", defaultFill)
 				    .attr("stroke", "blue")
 				    .on("mouseover", 
 						function(d,i)
 						{
-							d3.select(this).attr("fill","red");
-							return tooltip.style("top",  (d3.mouse(this)[1]) + height/2-margin + "px")
-										.style("left", (d3.mouse(this)[0]) + width/2-margin + "px")
+							d3.select(this).attr("fill",highlightFill);
+							return tooltip.style("top",  (d3.mouse(this)[1]) + height/2-heightMargin + "px")
+										.style("left", (d3.mouse(this)[0]) + width/2-witdthMargin + "px")
 										.html("<p>Make:\t" + d[0] + 
 											"</br>Fuel:\t" + d[1] + 
 											"</br>Cylinders:\t" + d[2] + 
@@ -115,31 +118,48 @@ function initLeftChart()
 					.on("mousemove", 
 						function(d,i)
 						{
-							return tooltip.style("top",  (d3.mouse(this)[1]) + height/2-margin + "px")
-										.style("left", (d3.mouse(this)[0]) + width/2-margin + "px");
+							return tooltip.style("top",  (d3.mouse(this)[1]) + height/2-heightMargin + "px")
+										.style("left", (d3.mouse(this)[0]) + width/2-witdthMargin + "px");
 						})
 				   .on("mouseout", 
 						function(d,i)
 						{
-							d3.select(this).attr("fill","lime");
+							d3.select(this).attr("fill",defaultFill);
 							return tooltip.style("visibility", "hidden");
 						});
 	
 	//d3.select("svg").selectAll("#circle1").attr("fill","red");
 
 	d3.select("svg")
-	 .attr("width",width + 2*margin)
-	 .attr("height",height + 2*margin)
+	 .attr("width",width + 2*witdthMargin)
+	 .attr("height",height + 2*heightMargin)
 	 .append("g")
-	 .attr("transform","translate("+margin+","+margin+")")
+	 .attr("transform","translate("+witdthMargin+","+heightMargin+")")
 	 .call(d3.axisLeft(fy).tickValues([10,20,50,100]).tickFormat((d, i) => [10,20,50,100][i]));
 
 	d3.select("svg")
-	 .attr("width",width + 2*margin)
-	 .attr("height",height + 2*margin)
+	 .attr("width",width + 2*witdthMargin)
+	 .attr("height",height + 2*heightMargin)
 	 .append("g")
-	 .attr("transform","translate("+margin+","+250+")")
+	 .attr("transform","translate("+witdthMargin+","+250+")")
 	 .call(d3.axisBottom(fx).tickValues([10,20,50,100]).tickFormat((d, i) => [10,20,50,100][i]));
+	
+	d3.select("svg").append("text")
+     .attr("class", "x label")
+     .attr("text-anchor", "end")
+     .attr("font-size", "10")
+     .attr("x", width-490)
+     .attr("y", height-415)
+     .text("Average MPG City");
+	d3.select("svg").append("text")
+     .attr("class", "y label")
+     .attr("text-anchor", "end")
+     .attr("y", 8)
+     .attr("font-size", "10")
+     .attr("y", width-650)
+     .attr("x", height-810)
+     .attr("transform", "rotate(-90)")
+     .text("Average MPG Highway");
 	 
 	d3.selectAll("button").on("click",
 		function(d,index)
