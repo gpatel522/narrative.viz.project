@@ -67,7 +67,7 @@ function initLeftChart()
 	var fy = d3.scaleLog().domain([10,150]).range([200,0]);
 	var width = 700;
 	var height = 700;
-	var witdthMargin = 80;
+	var witdthMargin = 60;
 	var heightMargin = 50;
 	var scalefactor = 400;
 
@@ -148,16 +148,16 @@ function initLeftChart()
      .attr("class", "x label")
      .attr("text-anchor", "end")
      .attr("font-size", "10")
-     .attr("x", width-490)
-     .attr("y", height-415)
+     .attr("x", width+witdthMargin-570)
+     .attr("y", height+heightMargin-460)
      .text("Average MPG City");
 	d3.select("svg").append("text")
      .attr("class", "y label")
      .attr("text-anchor", "end")
      .attr("y", 8)
      .attr("font-size", "10")
-     .attr("y", width-650)
-     .attr("x", height-810)
+     .attr("y", width+witdthMargin-735)
+     .attr("x", height+heightMargin-860)
      .attr("transform", "rotate(-90)")
      .text("Average MPG Highway");
 	 
