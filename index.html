@@ -37,7 +37,7 @@
 <script src='https://d3js.org/d3.v5.min.js'></script>
 <body onload='init()'>
 <h2>Fuel efficiency for different engines</h2>
-<p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.</p>
+<p>There is a lot of variables that affect fuel efficiency. Like the shape of the automobile which causes drag, driving conditions, vehicle upkeep, cylinder deactivation, types of injectors in the engine are among the few. Each of these factors can compensate for each other in many ways. However, here we present data that clearly shows a positive correlation between the number of engine cylinders and fuel efficiency. We present data for all automobile manufactures in 2017. The scatter plot on the left has city MPG plotted on the x-axis and highway MPG plotted on the y-axis. The size of the circle representing the automobile indicates the number of cylinders it possesses. The graph clearly shows the automobiles with higher number of cylinders fall to the lower left, among the most highway/city inefficient. While automobile that are more efficient tend to be toward the middle to the top right of the plot. We also have data for some of the electric cars produced in 2017. These cars are by far the most efficient of the energy converted from its fuel to miles on the road. These appear on the top right. The bar chart on the right contains average MPG data for automobiles in the same category (# of cylinders). The electric cars are once again shown to have most efficieny and 12 cylinder automobilies with least efficiency. </p>
 <div class="btn-group" style="width:100%">
 <button style="width:10%" id="AnyButton">Any type</button>
 <button style="width:10%" id="ElectricButton">Electric</button>
@@ -53,7 +53,6 @@
 <div id="my_dataviz1" class="grid-child"></div>
 <div id="my_dataviz2" class="grid-child"></div>
 </div>
-<!--svg viewBox="0 0 300 300" align: center></svg-->
 <script>
 const data = new Array();
 var defaultFill = "lightblue"
@@ -76,9 +75,10 @@ async function init()
 	fileRows.splice(15, 1); //some cleanup - removing 2 cylinders since its only 1 car
 	fileRows.forEach(element => data.push(element.split(',')));
 	
-	initLeftChart();
-	initRightChart();
-	hookupButtonListeners();
+	await initLeftChart();
+	await initRightChart();
+	await hookupButtonListeners();
+	await transition();
 }
 
 function initRightChart() 
@@ -107,10 +107,14 @@ function initRightChart()
 				   .append("rect")
 				   .attr("id", function(d,i) { return "rect" + i; })
 				   .attr("x", function(d,i) { return 5+(i)*23 + i*5; })
-				   .attr("y", function(d,i) { return 200-data[i]; })
+				   .attr("y", function(d,i) { return 200; })
 				   .attr("width", function(d,i) { return 23; })
-				   .attr("height", function(d,i) { return data[i]; })
-				   .attr("fill", function(d,i) { return Color[i];});
+				   .attr("height", function(d,i) { return 0; })
+				   .attr("fill", function(d,i) { return Color[i];})
+				   .transition().duration(3000)
+				   .attr("y", function(d,i) { return 200-data[i]; } )
+				   .attr("height", function(d,i) { return data[i]; });
+				   
 	//Axis
 	d3.select("#my_dataviz2")
 	 .select("svg")
@@ -190,8 +194,8 @@ function initLeftChart()
 				    .enter()
 				    .append("circle")
 				    .attr("id", function(d,i) { return "circle" + i; })
-				    .attr("cx", function(d,i) { return fx(d[4]); })
-				    .attr("cy", function(d,i) { return fy(d[3]); })
+				    .attr("cx", function(d,i) { return 0; })
+				    .attr("cy", function(d,i) { return 0; })
 				    .attr("r", function(d) { return parseInt(d[2])+2; })
 				    .attr("fill", function(d,i) { return Color[dict[d[2]]]; })
 				    .attr("stroke", "black")
@@ -222,7 +226,10 @@ function initLeftChart()
 						{
 							d3.select(this).attr("fill", function(d,i) { return Color[dict[d[2]]]; });
 							return tooltip.style("visibility", "hidden");
-						});
+						})
+					.transition().duration(3000)
+					.attr("cx", function (d) { return fx(d[4]); } )
+					.attr("cy", function (d) { return fy(d[3]); } );
 	
 	//d3.select("svg").selectAll("#circle1").attr("fill","red");
 
