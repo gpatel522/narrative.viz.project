@@ -7,7 +7,7 @@
   color: white;
   padding: 10px 24px;
   cursor: pointer;
-  float: left;
+  float: center;
   margin: 5px;
 }
 .btn-group:after {
@@ -31,12 +31,13 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-gap: 20px;
-	border: 1px outset red;
 }
 </style>
 </head>
 <script src='https://d3js.org/d3.v5.min.js'></script>
 <body onload='init()'>
+<h2>Fuel efficiency for different engines</h2>
+<p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.</p>
 <div class="btn-group" style="width:100%">
 <button style="width:11%" id="AnyButton">Any type</button>
 <button style="width:11%" id="ElectricButton">Electric</button>
@@ -57,6 +58,9 @@
 const data = new Array();
 var defaultFill = "lightblue"
 var highlightFill = "lightgreen"
+var bar1Color = "green";
+var bar2Color = "blue";
+	var scalefactor = 350;
 async function init() 
 {
 	let fileRows = new Array();
@@ -72,6 +76,183 @@ async function init()
 	initLeftChart();
 	initRightChart();
 	hookupButtonListeners();
+}
+
+function initRightChart() 
+{
+	var dataCylinders = [0,3,4,6,8,10,12];
+	var data = [101.5,119.2,37.5,31,31.36538462,24,25.58974359,18.28205128,21.86666667,14.7,20.66666667,13.33333333,18.71428571,12];
+	var x = d3.scaleBand().domain(dataCylinders).range([0,183]);
+	var y = d3.scaleLinear().domain([0,150]).range([150,0]);
+	var width = 700;
+	var height = 700;
+	var witdthMargin = 60;
+	var heightMargin = 50;
+
+	var graph = d3.select("#my_dataviz2")
+				 .append("svg")
+				 .attr("viewBox","0,0,"+scalefactor+","+scalefactor)
+				 .attr("width",width + 2*witdthMargin)
+				 .attr("height",height + 2*heightMargin)
+				 .append("g");
+	//var data2 = [4,8,15,16,23,42];
+	var bar = graph.attr("transform","translate("+witdthMargin+","+heightMargin+")")
+				   .selectAll("g")
+				   .data(data)
+				   .enter()
+				   .append("rect")
+				   .attr("id", function(d,i) { return "rect" + i; })
+				   .attr("x", function(d,i) { return (i)*13; })
+				   .attr("y", function(d,i) { return 200-data[i]; })
+				   .attr("width", function(d,i) { return 13; })
+				   .attr("height", function(d,i) { return data[i]; })
+				   .attr("fill", function(d,i) { if (i%2 == 0)
+													return bar1Color;
+												 else
+													return bar2Color;});
+	//Axis
+	d3.select("#my_dataviz2")
+	 .select("svg")
+	 .attr("width",width + 2*witdthMargin)
+	 .attr("height",height + 2*heightMargin)
+	 .append("g")
+	 .attr("transform","translate("+witdthMargin+","+(heightMargin+50)+")")
+	 .call(d3.axisLeft(y));
+
+	d3.select("#my_dataviz2")
+	 .select("svg")
+	 .attr("width",width + 2*witdthMargin)
+	 .attr("height",height + 2*heightMargin)
+	 .append("g")
+	 .attr("transform","translate("+witdthMargin+","+(heightMargin+200)+")")
+	 .call(d3.axisBottom(x));
+	 
+	d3.select("#my_dataviz2").select("svg")
+	 .append("text")
+     .attr("class", "x label")
+     .attr("text-anchor", "end")
+     .attr("font-size", "10")
+     .attr("x", width+witdthMargin-570)
+     .attr("y", height+heightMargin-460)
+     .text("Car Cylinders");
+	d3.select("#my_dataviz2").select("svg")
+	 .append("text")
+     .attr("class", "y label")
+     .attr("text-anchor", "end")
+     .attr("y", 8)
+     .attr("font-size", "10")
+     .attr("y", width+witdthMargin-735)
+     .attr("x", height+heightMargin-900)
+     .attr("transform", "rotate(-90)")
+     .text("Average MPG");
+	 
+	var svg = d3.select("#my_dataviz2").select("svg")
+    svg.append("circle").attr("cx",180).attr("cy",100).attr("r",6).style("fill", bar1Color)
+	svg.append("circle").attr("cx",180).attr("cy",117).attr("r",6).style("fill", bar2Color)
+	svg.append("text").attr("x", 195).attr("y", 100).text("Avg MPG highway").style("font-size", "10").attr("alignment-baseline","middle")
+	svg.append("text").attr("x", 195).attr("y", 117).text("Avg MPG city").style("font-size", "10").attr("alignment-baseline","middle")
+}
+
+function initLeftChart() 
+{
+	var fx = d3.scaleLog().domain([10,150]).range([0,200]);
+	var fy = d3.scaleLog().domain([10,150]).range([200,0]);
+	var width = 700;
+	var height = 700;
+	var witdthMargin = 60;
+	var heightMargin = 50;
+
+	var graph = d3.select("#my_dataviz1")
+				 .append("svg")
+				 .attr("viewBox","0,0,"+scalefactor+","+scalefactor)
+				 .attr("width",width + 2*witdthMargin)
+				 .attr("height",height + 2*heightMargin)
+				 .append("g");
+
+	var tooltip = d3.select("#my_dataviz1")
+					.append("div")
+					.attr("class", "tooltip")
+					.style("visibility", "hidden")
+					.style("background-color", "white")
+					.style("border", "solid")
+					.style("border-width", "2px")
+					.style("border-radius", "5px")
+					.style("padding", "5px")
+					.text("I'm a circle!")
+					.style("position", "absolute");
+					//.text("I'm a circle!");
+
+	var circle = graph.attr("transform","translate("+witdthMargin+","+heightMargin+")")
+				    .selectAll("g")
+				    .data(data)
+				    .enter()
+				    .append("circle")
+				    .attr("id", function(d,i) { return "circle" + i; })
+				    .attr("cx", function(d,i) { return fx(d[4]); })
+				    .attr("cy", function(d,i) { return fy(d[3]); })
+				    .attr("r", function(d) { return parseInt(d[2])+2; })
+				    .attr("fill", defaultFill)
+				    .attr("stroke", "blue")
+				    .on("mouseover", 
+						function(d,i)
+						{
+							d3.select(this).attr("fill",highlightFill);
+							return tooltip.style("top",  (d3.mouse(this)[1]) + height/2-heightMargin + "px")
+										.style("left", (d3.mouse(this)[0]) + width/2-witdthMargin + "px")
+										.html("<p>Make:\t" + d[0] + 
+											"</br>Fuel:\t" + d[1] + 
+											"</br>Cylinders:\t" + d[2] + 
+											"</br>AvgHighwayMPG:\t" + d[3] + 
+											"</br>AvgCityMPG:\t" + d[4])
+										.style("visibility", "visible");
+						})
+					.on("mousemove", 
+						function(d,i)
+						{
+							return tooltip.style("top",  (d3.mouse(this)[1]) + height/2-heightMargin + "px")
+										.style("left", (d3.mouse(this)[0]) + width/2-witdthMargin + "px");
+						})
+				    .on("mouseout", 
+						function(d,i)
+						{
+							d3.select(this).attr("fill",defaultFill);
+							return tooltip.style("visibility", "hidden");
+						});
+	
+	//d3.select("svg").selectAll("#circle1").attr("fill","red");
+
+	d3.select("svg")
+	 .attr("width",width + 2*witdthMargin)
+	 .attr("height",height + 2*heightMargin)
+	 .append("g")
+	 .attr("transform","translate("+witdthMargin+","+heightMargin+")")
+	 .call(d3.axisLeft(fy).tickValues([10,20,50,100]).tickFormat((d, i) => [10,20,50,100][i]));
+
+	d3.select("svg")
+	 .attr("width",width + 2*witdthMargin)
+	 .attr("height",height + 2*heightMargin)
+	 .append("g")
+	 .attr("transform","translate("+witdthMargin+","+250+")")
+	 .call(d3.axisBottom(fx).tickValues([10,20,50,100]).tickFormat((d, i) => [10,20,50,100][i]));
+	
+	d3.select("svg")
+	 .append("text")
+     .attr("class", "x label")
+     .attr("text-anchor", "end")
+     .attr("font-size", "10")
+     .attr("x", width+witdthMargin-570)
+     .attr("y", height+heightMargin-460)
+     .text("Average MPG City");
+	d3.select("svg")
+	 .append("text")
+     .attr("class", "y label")
+     .attr("text-anchor", "end")
+     .attr("y", 8)
+     .attr("font-size", "10")
+     .attr("y", width+witdthMargin-735)
+     .attr("x", height+heightMargin-860)
+     .attr("transform", "rotate(-90)")
+     .text("Average MPG Highway");
 }
 function hookupButtonListeners()
 {
@@ -164,186 +345,6 @@ function hookupButtonListeners()
 				}
 			}
 		});
-}
-function initRightChart() 
-{
-	var dataCylinders = [0,3,4,6,8,10,12];
-	var data = [101.5,119.2,37.5,31,31.36538462,24,25.58974359,18.28205128,21.86666667,14.7,20.66666667,13.33333333,18.71428571,12];
-	var x = d3.scaleBand().domain(dataCylinders).range([0,183]);
-	var y = d3.scaleLinear().domain([0,150]).range([150,0]);
-	var width = 700;
-	var height = 700;
-	var witdthMargin = 60;
-	var heightMargin = 50;
-	var scalefactor = 350;
-	var bar1Color = "green";
-	var bar2Color = "blue";
-
-	var graph = d3.select("#my_dataviz2")
-				 .append("svg")
-				 .attr("viewBox","0,0,"+scalefactor+","+scalefactor)
-				 .attr("width",width + 2*witdthMargin)
-				 .attr("height",height + 2*heightMargin)
-				 .append("g");
-	//var data2 = [4,8,15,16,23,42];
-	var bar = graph.attr("transform","translate("+witdthMargin+","+heightMargin+")")
-				   .selectAll("g")
-				   .data(data)
-				   .enter()
-				   .append("rect")
-				   .attr("id", function(d,i) { return "rect" + i; })
-				   .attr("x", function(d,i) { return (i)*13; })
-				   .attr("y", function(d,i) { return 200-data[i]; })
-				   .attr("width", function(d,i) { return 13; })
-				   .attr("height", function(d,i) { return data[i]; })
-				   .attr("fill", function(d,i) { if (i%2 == 0)
-													return bar1Color;
-												 else
-													return bar2Color;});
-	//Axis
-	d3.select("#my_dataviz2")
-	 .select("svg")
-	 .attr("width",width + 2*witdthMargin)
-	 .attr("height",height + 2*heightMargin)
-	 .append("g")
-	 .attr("transform","translate("+witdthMargin+","+(heightMargin+50)+")")
-	 .call(d3.axisLeft(y));
-
-	d3.select("#my_dataviz2")
-	 .select("svg")
-	 .attr("width",width + 2*witdthMargin)
-	 .attr("height",height + 2*heightMargin)
-	 .append("g")
-	 .attr("transform","translate("+witdthMargin+","+(heightMargin+200)+")")
-	 .call(d3.axisBottom(x));
-	 
-	d3.select("#my_dataviz2").select("svg")
-	 .append("text")
-     .attr("class", "x label")
-     .attr("text-anchor", "end")
-     .attr("font-size", "10")
-     .attr("x", width+witdthMargin-570)
-     .attr("y", height+heightMargin-460)
-     .text("Car Cylinders");
-	d3.select("#my_dataviz2").select("svg")
-	 .append("text")
-     .attr("class", "y label")
-     .attr("text-anchor", "end")
-     .attr("y", 8)
-     .attr("font-size", "10")
-     .attr("y", width+witdthMargin-735)
-     .attr("x", height+heightMargin-900)
-     .attr("transform", "rotate(-90)")
-     .text("Average MPG");
-	 
-	var svg = d3.select("#my_dataviz2").select("svg")
-    svg.append("circle").attr("cx",180).attr("cy",100).attr("r",6).style("fill", bar1Color)
-	svg.append("circle").attr("cx",180).attr("cy",117).attr("r",6).style("fill", bar2Color)
-	svg.append("text").attr("x", 195).attr("y", 100).text("Avg MPG highway").style("font-size", "10").attr("alignment-baseline","middle")
-	svg.append("text").attr("x", 195).attr("y", 117).text("Avg MPG city").style("font-size", "10").attr("alignment-baseline","middle")
-}
-
-function initLeftChart() 
-{
-	var fx = d3.scaleLog().domain([10,150]).range([0,200]);
-	var fy = d3.scaleLog().domain([10,150]).range([200,0]);
-	var width = 700;
-	var height = 700;
-	var witdthMargin = 60;
-	var heightMargin = 50;
-	var scalefactor = 350;
-
-	var graph = d3.select("#my_dataviz1")
-				 .append("svg")
-				 .attr("viewBox","0,0,"+scalefactor+","+scalefactor)
-				 .attr("width",width + 2*witdthMargin)
-				 .attr("height",height + 2*heightMargin)
-				 .append("g");
-
-	var tooltip = d3.select("#my_dataviz1")
-					.append("div")
-					.attr("class", "tooltip")
-					.style("visibility", "hidden")
-					.style("background-color", "white")
-					.style("border", "solid")
-					.style("border-width", "2px")
-					.style("border-radius", "5px")
-					.style("padding", "5px")
-					.text("I'm a circle!")
-					.style("position", "absolute");
-					//.text("I'm a circle!");
-
-	var circle = graph.attr("transform","translate("+witdthMargin+","+heightMargin+")")
-				    .selectAll("g")
-				    .data(data)
-				    .enter()
-				    .append("circle")
-				    .attr("id", function(d,i) { return "circle" + i; })
-				    .attr("cx", function(d,i) { return fx(d[4]); })
-				    .attr("cy", function(d,i) { return fy(d[3]); })
-				    .attr("r", function(d) { return parseInt(d[2])+2; })
-				    .attr("fill", defaultFill)
-				    .attr("stroke", "blue")
-				    .on("mouseover", 
-						function(d,i)
-						{
-							d3.select(this).attr("fill",highlightFill);
-							return tooltip.style("top",  (d3.mouse(this)[1]) + height/2-heightMargin + "px")
-										.style("left", (d3.mouse(this)[0]) + width/2-witdthMargin + "px")
-										.html("<p>Make:\t" + d[0] + 
-											"</br>Fuel:\t" + d[1] + 
-											"</br>Cylinders:\t" + d[2] + 
-											"</br>AvgHighwayMPG:\t" + d[3] + 
-											"</br>AvgCityMPG:\t" + d[4])
-										.style("visibility", "visible");
-						})
-					.on("mousemove", 
-						function(d,i)
-						{
-							return tooltip.style("top",  (d3.mouse(this)[1]) + height/2-heightMargin + "px")
-										.style("left", (d3.mouse(this)[0]) + width/2-witdthMargin + "px");
-						})
-				   .on("mouseout", 
-						function(d,i)
-						{
-							d3.select(this).attr("fill",defaultFill);
-							return tooltip.style("visibility", "hidden");
-						});
-	
-	//d3.select("svg").selectAll("#circle1").attr("fill","red");
-
-	d3.select("svg")
-	 .attr("width",width + 2*witdthMargin)
-	 .attr("height",height + 2*heightMargin)
-	 .append("g")
-	 .attr("transform","translate("+witdthMargin+","+heightMargin+")")
-	 .call(d3.axisLeft(fy).tickValues([10,20,50,100]).tickFormat((d, i) => [10,20,50,100][i]));
-
-	d3.select("svg")
-	 .attr("width",width + 2*witdthMargin)
-	 .attr("height",height + 2*heightMargin)
-	 .append("g")
-	 .attr("transform","translate("+witdthMargin+","+250+")")
-	 .call(d3.axisBottom(fx).tickValues([10,20,50,100]).tickFormat((d, i) => [10,20,50,100][i]));
-	
-	d3.select("svg")
-	 .append("text")
-     .attr("class", "x label")
-     .attr("text-anchor", "end")
-     .attr("font-size", "10")
-     .attr("x", width+witdthMargin-570)
-     .attr("y", height+heightMargin-460)
-     .text("Average MPG City");
-	d3.select("svg")
-	 .append("text")
-     .attr("class", "y label")
-     .attr("text-anchor", "end")
-     .attr("y", 8)
-     .attr("font-size", "10")
-     .attr("y", width+witdthMargin-735)
-     .attr("x", height+heightMargin-860)
-     .attr("transform", "rotate(-90)")
-     .text("Average MPG Highway");
 }
 </script>
 </body>
