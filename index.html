@@ -36,7 +36,7 @@
 </head>
 <script src='https://d3js.org/d3.v5.min.js'></script>
 <body onload='init()'>
-<h2>Fuel efficiency for different engines+</h2>
+<h2>Fuel efficiency for different engines</h2>
 <p>There is a lot of variables that affect fuel efficiency. Like the shape of the automobile which causes drag, driving conditions, vehicle upkeep, cylinder deactivation, types of injectors in the engine are among the few. Each of these factors can compensate for each other in many ways. However, here we present data that clearly shows a positive correlation between the number of engine cylinders and fuel efficiency. We present data for all automobile manufactures in 2017. The scatter plot on the left has city MPG plotted on the x-axis and highway MPG plotted on the y-axis. The size of the circle representing the automobile indicates the number of cylinders it possesses. The graph clearly shows the automobiles with higher number of cylinders fall to the lower left, among the most highway/city inefficient. While automobile that are more efficient tend to be toward the middle to the top right of the plot. We also have data for some of the electric cars produced in 2017. These cars are by far the most efficient of the energy converted from its fuel to miles on the road. These appear on the top right. The bar chart on the right contains average MPG data for automobiles in the same category (# of cylinders). The electric cars are once again shown to have most efficieny and 12 cylinder automobilies with least efficiency. </p>
 <div class="btn-group" style="width:100%">
 <button style="width:10%" id="AnyButton">Any type</button>
@@ -152,13 +152,47 @@ function initRightChart()
      .attr("transform", "rotate(-90)")
      .text("Average MPG Highway/City");
 	 
-	//var svg = d3.select("#my_dataviz2").select("svg")
-    //svg.append("circle").attr("cx",190).attr("cy",100).attr("r",6).style("fill", bar1Color)
-	//svg.append("circle").attr("cx",190).attr("cy",117).attr("r",6).style("fill", bar2Color)
-	//svg.append("text").attr("x", 205).attr("y", 100).text("Avg MPG highway").style("font-size", "10").attr("alignment-baseline","middle")
-	//svg.append("text").attr("x", 205).attr("y", 117).text("Avg MPG city").style("font-size", "10").attr("alignment-baseline","middle")
+	var svg = d3.select("#my_dataviz2").select("svg")
+    svg.append("rect").attr("x",195).attr("y",60).attr("width",95).attr("height",50).style("fill", "lightblue").style("stroke", "blue").attr("opacity",0.5)
+	//svg.append("circle").attr("cx",190).attr("cy",117).attr("r",6).style("fill", "black")
+	var annotationText = "This chart shows average efficiency of automobiles. Each bar represents avg MPG of automobiles with given number of cylinders.";
+	//svg.append("textArea").attr("x", 205).attr("y", 100).text(annotationText).style("font-size", "7").attr("width", "100").style("height", "100").attr("alignment-baseline","middle")
+	//svg.append("text").attr("x", 205).attr("y", 100).text(annotationText).call(wrap, 30);
+	svg.append("text").attr("x", 205).attr("y", 70).attr("width",40).attr("height",80).style("font-size", "7").text(annotationText).call(wrap, 80);
 }
-
+//Got this function from from stackoverflow https://stackoverflow.com/questions/24784302/wrapping-text-in-d3/24785497
+function wrap(text, width) {
+    text.each(function () {
+        var text = d3.select(this),
+            words = text.text().split(/\s+/).reverse(),
+            word,
+            line = [],
+            lineNumber = 0,
+            lineHeight = 1.1, // ems
+            x = text.attr("x"),
+            y = text.attr("y"),
+            dy = 0, //parseFloat(text.attr("dy")),
+            tspan = text.text(null)
+                        .append("tspan")
+                        .attr("x", x)
+                        .attr("y", y)
+                        .attr("dy", dy + "em");
+        while (word = words.pop()) {
+            line.push(word);
+            tspan.text(line.join(" "));
+            if (tspan.node().getComputedTextLength() > width) {
+                line.pop();
+                tspan.text(line.join(" "));
+                line = [word];
+                tspan = text.append("tspan")
+                            .attr("x", x)
+                            .attr("y", y)
+                            .attr("dy", ++lineNumber * lineHeight + dy + "em")
+                            .text(word);
+            }
+        }
+    });
+}
 function initLeftChart() 
 {
 	var fx = d3.scaleLog().domain([10,150]).range([0,200]);
@@ -233,21 +267,21 @@ function initLeftChart()
 	
 	//d3.select("svg").selectAll("#circle1").attr("fill","red");
 
-	d3.select("svg")
+	d3.select("#my_dataviz1").select("svg")
 	 .attr("width",width + 2*witdthMargin)
 	 .attr("height",height + 2*heightMargin)
 	 .append("g")
 	 .attr("transform","translate("+witdthMargin+","+heightMargin+")")
 	 .call(d3.axisLeft(fy).tickValues([10,20,50,100]).tickFormat((d, i) => [10,20,50,100][i]));
 
-	d3.select("svg")
+	d3.select("#my_dataviz1").select("svg")
 	 .attr("width",width + 2*witdthMargin)
 	 .attr("height",height + 2*heightMargin)
 	 .append("g")
 	 .attr("transform","translate("+witdthMargin+","+250+")")
 	 .call(d3.axisBottom(fx).tickValues([10,20,50,100]).tickFormat((d, i) => [10,20,50,100][i]));
 	
-	d3.select("svg")
+	d3.select("#my_dataviz1").select("svg")
 	 .append("text")
      .attr("class", "x label")
      .attr("text-anchor", "end")
@@ -256,7 +290,7 @@ function initLeftChart()
      .attr("y", height+heightMargin-460)
      .text("Average MPG City");
 	 
-	d3.select("svg")
+	d3.select("#my_dataviz1").select("svg")
 	 .append("text")
      .attr("class", "y label")
      .attr("text-anchor", "end")
@@ -266,6 +300,15 @@ function initLeftChart()
      .attr("x", height+heightMargin-860)
      .attr("transform", "rotate(-90)")
      .text("Average MPG Highway");
+	
+	
+	var svg = d3.select("#my_dataviz1").select("svg")
+    svg.append("rect").attr("x",80).attr("y",60).attr("width",95).attr("height",55).style("fill", "lightblue").style("stroke", "blue").attr("opacity",0.5)
+	//svg.append("circle").attr("cx",190).attr("cy",117).attr("r",6).style("fill", "black")
+	var annotationText = "This scattered plot shows the automobiles that.";
+	//svg.append("textArea").attr("x", 205).attr("y", 100).text(annotationText).style("font-size", "7").attr("width", "100").style("height", "100").attr("alignment-baseline","middle")
+	//svg.append("text").attr("x", 205).attr("y", 100).text(annotationText).call(wrap, 30);
+	svg.append("text").attr("x",90).attr("y",70).attr("width",40).attr("height",80).style("font-size", "7").text(annotationText).call(wrap, 80);
 }
 function hookupButtonListeners()
 {
