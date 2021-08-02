@@ -7,7 +7,7 @@
   padding: 10px 24px;
   cursor: pointer;
   float: center;
-  margin: 5px;
+  margin: 3px;
   background-color: green;
 }
 .btn-group:after {
@@ -37,7 +37,8 @@
 <script src='https://d3js.org/d3.v5.min.js'></script>
 <body onload='init()'>
 <h2 align="center">Fuel efficiency compared using number of cylinders</h2>
-<p>There is a lot of variables that affect fuel efficiency. Like the shape of the automobile which causes drag, driving conditions, vehicle upkeep, cylinder deactivation, types of injectors in the engine are among the few. Each of these factors can compensate for each other in many ways. However, here we present data that clearly shows a positive correlation between the number of engine cylinders and fuel efficiency. We present data for all automobile manufactures in 2017. The scatter plot on the left has city MPG plotted on the x-axis and highway MPG plotted on the y-axis. The size of the circle representing the automobile indicates the number of cylinders it possesses. The graph clearly shows the automobiles with higher number of cylinders fall to the lower left, among the most highway/city inefficient. While automobile that are more efficient tend to be toward the middle to the top right of the plot. We also have data for some of the electric cars produced in 2017. These cars are by far the most efficient of the energy converted from its fuel to miles on the road. These appear on the top right. The bar chart on the right contains average MPG data for automobiles in the same category (# of cylinders). The electric cars are once again shown to have most efficieny and 12 cylinder automobilies with least efficiency. </p>
+<p>There is a lot of variables that affect fuel efficiency. Like the shape of the automobile which causes drag, driving conditions, vehicle upkeep, cylinder deactivation, types of injectors in the engine are among the few. Each of these factors can compensate for each other in many ways. However, here we present data that clearly shows a negative correlation between the number of engine cylinders and fuel efficiency. We present data for all automobile manufactures in 2017. The scatter plot on the left has city MPG plotted on the x-axis and highway MPG plotted on the y-axis. The size of the circle representing the automobile indicates the number of cylinders it possesses. The graph clearly shows the automobiles with higher number of cylinders fall to the lower left, among the most highway/city inefficient. While automobile that are more efficient tend to be toward the middle to the top right of the plot. We also have data for some of the electric cars produced in 2017. These cars are by far the most efficient of the energy converted from its fuel to miles on the road. These appear on the top right. The bar chart on the right contains average MPG data for automobiles in the same category (# of cylinders). The electric cars are once again shown to have most efficieny and 12 cylinder automobilies with least efficiency. </p>
+<h4>Click following buttons to further drill down in to the data. Tooltips are available on the scatter plot to inspect individual automobile in the data.</h4>
 <div class="btn-group" style="width:100%">
 <button style="width:10%" id="AnyButton">Any type</button>
 <button style="width:10%" id="ElectricButton">Electric</button>
@@ -154,9 +155,9 @@ function initRightChart()
      .text("Average MPG Highway/City");
 	 
 	var svg = d3.select("#my_dataviz2").select("svg")
-    svg.append("rect").attr("x",195).attr("y",50).attr("width",95).attr("height",50).style("fill", "lightblue").style("stroke", "blue").attr("opacity",0.5)
+    svg.append("rect").attr("x",195).attr("y",50).attr("width",95).attr("height",95).style("fill", "lightblue").style("stroke", "blue").attr("opacity",0.5)
 	//svg.append("circle").attr("cx",190).attr("cy",117).attr("r",6).style("fill", "black")
-	var annotationText = "This chart shows average efficiency of automobiles. Each bar represents avg MPG of automobiles with given number of cylinders.";
+	var annotationText = "This chart shows average efficiency of automobiles. Each bar represents avg MPG of automobiles with given number of cylinders. The trend clearly shows that cars with higher cylinder engines are less efficient than cars with fewer cylinders and even lesser with Electric cars.";
 	//svg.append("textArea").attr("x", 205).attr("y", 100).text(annotationText).style("font-size", "7").attr("width", "100").style("height", "100").attr("alignment-baseline","middle")
 	//svg.append("text").attr("x", 205).attr("y", 100).text(annotationText).call(wrap, 30);
 	svg.append("text").attr("x", 205).attr("y", 60).attr("width",40).attr("height",80).style("font-size", "7").text(annotationText).call(wrap, 80);
@@ -306,13 +307,13 @@ function initLeftChart()
 	var svg = d3.select("#my_dataviz1").select("svg")
     svg.append("rect").attr("x",80).attr("y",5).attr("width",95).attr("height",85).style("fill", "lightblue").style("stroke", "blue").attr("opacity",0.5);
 	//svg.append("circle").attr("cx",190).attr("cy",117).attr("r",6).style("fill", "black")
-	var annotationText = "This scattered plot shows highway MPG on y axis and city MPG on x axis. Each circle represents an automobile in the data. The size of circle is indication of how may cylinders are in their engines. Electric automobiles are plotted under 0 cylinders.";
+	var annotationText = "This scattered plot shows highway MPG on y axis and city MPG on x axis. Each circle represents an automobile in the data. The size of circle is indication of how may cylinders are in their engines. Electric automobiles have the smallest circles.";
 	//svg.append("textArea").attr("x", 205).attr("y", 100).text(annotationText).style("font-size", "7").attr("width", "100").style("height", "100").attr("alignment-baseline","middle")
 	//svg.append("text").attr("x", 205).attr("y", 100).text(annotationText).call(wrap, 30);
 	svg.append("text").attr("x",90).attr("y",15).attr("width",40).attr("height",80).style("font-size", "7").text(annotationText).call(wrap, 80);
 	svg.append("text").attr("x",90).attr("y",300).attr("width",40).attr("height",80).style("font-size", "7").text("*Tooltips available for drilling down in to the data.").call(wrap, 180);
 	
-    svg.append("rect").attr("x",195).attr("y",220).attr("width",45).attr("height",15).style("fill", "lightblue").style("stroke", "blue").attr("opacity",0.5)
+    svg.append("rect").attr("x",195).attr("y",221).attr("width",45).attr("height",15).style("fill", "lightblue").style("stroke", "blue").attr("opacity",0.5)
 	svg.append("text").attr("id","rectLabel").attr("x",200).attr("y",230).attr("width",40).attr("height",80).style("font-size", "7").text("Any type");
 }
 function hookupButtonListeners()
