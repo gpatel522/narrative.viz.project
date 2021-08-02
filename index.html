@@ -36,7 +36,7 @@
 </head>
 <script src='https://d3js.org/d3.v5.min.js'></script>
 <body onload='init()'>
-<h2>Fuel efficiency for different engines</h2>
+<h2 align="center">Fuel efficiency compared using number of cylinders</h2>
 <p>There is a lot of variables that affect fuel efficiency. Like the shape of the automobile which causes drag, driving conditions, vehicle upkeep, cylinder deactivation, types of injectors in the engine are among the few. Each of these factors can compensate for each other in many ways. However, here we present data that clearly shows a positive correlation between the number of engine cylinders and fuel efficiency. We present data for all automobile manufactures in 2017. The scatter plot on the left has city MPG plotted on the x-axis and highway MPG plotted on the y-axis. The size of the circle representing the automobile indicates the number of cylinders it possesses. The graph clearly shows the automobiles with higher number of cylinders fall to the lower left, among the most highway/city inefficient. While automobile that are more efficient tend to be toward the middle to the top right of the plot. We also have data for some of the electric cars produced in 2017. These cars are by far the most efficient of the energy converted from its fuel to miles on the road. These appear on the top right. The bar chart on the right contains average MPG data for automobiles in the same category (# of cylinders). The electric cars are once again shown to have most efficieny and 12 cylinder automobilies with least efficiency. </p>
 <div class="btn-group" style="width:100%">
 <button style="width:10%" id="AnyButton">Any type</button>
@@ -61,6 +61,7 @@ var highlightFill = "lightgreen"
 var Color = ["#75f02e","#8cd926","#a3c21f","#baab17","#d98c0d","#e87d08","#ff6600"];
 //var Color = ["#5cf547","#4ce666","#3dd685","#2ec7a3","#1fb8c2","#0fa8e0","#0099ff"];
 var dict = { "0": 0, "3": 1, "4": 2, "6": 3, "8": 4, "10": 5, "12": 6 };
+var inverDict = { "0": 0, "1": 0, "2": 3, "3": 4, "4": 6, "5": 8, "6": 10, "7": 12 };
 var scalefactor = 350;
 
 async function init() 
@@ -153,12 +154,12 @@ function initRightChart()
      .text("Average MPG Highway/City");
 	 
 	var svg = d3.select("#my_dataviz2").select("svg")
-    svg.append("rect").attr("x",195).attr("y",60).attr("width",95).attr("height",50).style("fill", "lightblue").style("stroke", "blue").attr("opacity",0.5)
+    svg.append("rect").attr("x",195).attr("y",50).attr("width",95).attr("height",50).style("fill", "lightblue").style("stroke", "blue").attr("opacity",0.5)
 	//svg.append("circle").attr("cx",190).attr("cy",117).attr("r",6).style("fill", "black")
 	var annotationText = "This chart shows average efficiency of automobiles. Each bar represents avg MPG of automobiles with given number of cylinders.";
 	//svg.append("textArea").attr("x", 205).attr("y", 100).text(annotationText).style("font-size", "7").attr("width", "100").style("height", "100").attr("alignment-baseline","middle")
 	//svg.append("text").attr("x", 205).attr("y", 100).text(annotationText).call(wrap, 30);
-	svg.append("text").attr("x", 205).attr("y", 70).attr("width",40).attr("height",80).style("font-size", "7").text(annotationText).call(wrap, 80);
+	svg.append("text").attr("x", 205).attr("y", 60).attr("width",40).attr("height",80).style("font-size", "7").text(annotationText).call(wrap, 80);
 }
 //Got this function from from stackoverflow https://stackoverflow.com/questions/24784302/wrapping-text-in-d3/24785497
 function wrap(text, width) {
@@ -303,19 +304,31 @@ function initLeftChart()
 	
 	
 	var svg = d3.select("#my_dataviz1").select("svg")
-    svg.append("rect").attr("x",80).attr("y",60).attr("width",95).attr("height",55).style("fill", "lightblue").style("stroke", "blue").attr("opacity",0.5)
+    svg.append("rect").attr("x",80).attr("y",5).attr("width",95).attr("height",85).style("fill", "lightblue").style("stroke", "blue").attr("opacity",0.5);
 	//svg.append("circle").attr("cx",190).attr("cy",117).attr("r",6).style("fill", "black")
-	var annotationText = "This scattered plot shows the automobiles that.";
+	var annotationText = "This scattered plot shows highway MPG on y axis and city MPG on x axis. Each circle represents an automobile in the data. The size of circle is indication of how may cylinders are in their engines. Electric automobiles are plotted under 0 cylinders.";
 	//svg.append("textArea").attr("x", 205).attr("y", 100).text(annotationText).style("font-size", "7").attr("width", "100").style("height", "100").attr("alignment-baseline","middle")
 	//svg.append("text").attr("x", 205).attr("y", 100).text(annotationText).call(wrap, 30);
-	svg.append("text").attr("x",90).attr("y",70).attr("width",40).attr("height",80).style("font-size", "7").text(annotationText).call(wrap, 80);
+	svg.append("text").attr("x",90).attr("y",15).attr("width",40).attr("height",80).style("font-size", "7").text(annotationText).call(wrap, 80);
+	svg.append("text").attr("x",90).attr("y",300).attr("width",40).attr("height",80).style("font-size", "7").text("*Tooltips available for drilling down in to the data.").call(wrap, 180);
+	
+    svg.append("rect").attr("x",195).attr("y",220).attr("width",45).attr("height",15).style("fill", "lightblue").style("stroke", "blue").attr("opacity",0.5)
+	svg.append("text").attr("id","rectLabel").attr("x",200).attr("y",230).attr("width",40).attr("height",80).style("font-size", "7").text("Any type");
 }
 function hookupButtonListeners()
 {
 	//d3.selectAll("button").style("background-color", function(d,i){ if (i==0) return "green"; else return Color[i-1]; });
+	
+	
 	d3.selectAll("button").on("click",
 		function(d,index)
 		{
+			if (index == 0)
+				d3.select("#my_dataviz1").select("svg").select("#rectLabel").text("Any type");
+			else if (index == 1)
+				d3.select("#my_dataviz1").select("svg").select("#rectLabel").text("Electric");
+			else
+				d3.select("#my_dataviz1").select("svg").select("#rectLabel").text(inverDict[index] + " cylinders");
 			for (var i = 0; i < 7; i++)
 			{
 				//if (i == index*2-1 || i == index*2-2 || index == 0)
